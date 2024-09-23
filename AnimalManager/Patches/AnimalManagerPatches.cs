@@ -19,7 +19,9 @@ namespace RestoreMonarchy.AnimalManager.Patches
         [HarmonyPrefix]
         static bool respawnAnimals_Prefix()
         {
-            return false;
+            AnimalManagerPlugin pluginInstance = AnimalManagerPlugin.Instance;
+
+            return pluginInstance.AnimalSpawnService == null;
         }
     }
 }

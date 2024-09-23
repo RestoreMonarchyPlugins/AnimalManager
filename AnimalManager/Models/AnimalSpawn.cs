@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using UnityEngine;
 
 namespace RestoreMonarchy.AnimalManager.Models
 {
@@ -18,8 +19,8 @@ namespace RestoreMonarchy.AnimalManager.Models
         public uint RespawnTime { get; set; }
         public bool ShouldSerializeRespawnTime() => RespawnTime != 0;
         [XmlAttribute]
-        public float Radius { get; set; }
-        public bool ShouldSerializeRadius() => Radius != 0;
+        public float MaxRadius { get; set; }
+        public bool ShouldSerializeMaxRadius() => MaxRadius != 0;
 
         [XmlAttribute]
         public float X { get; set; }

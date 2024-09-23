@@ -17,7 +17,6 @@ namespace RestoreMonarchy.AnimalManager.Components
         void Awake()
         {
             Animal = GetComponent<Animal>();
-
         }
 
         internal void SetAnimalSpawn(AnimalSpawn animalSpawn)
@@ -54,11 +53,14 @@ namespace RestoreMonarchy.AnimalManager.Components
                 }
             }
 
-            bool isUnderwater = WaterUtility.isPointUnderwater(Animal.transform.position);
-            if (isUnderwater)
+            if (pluginInstance.Configuration.Instance.CustomSpawns.BlockUnderwater)
             {
-                Animal.alertGoToPoint(AnimalSpawnPosition, true);
-            }
+                bool isUnderwater = WaterUtility.isPointUnderwater(Animal.transform.position);
+                if (isUnderwater)
+                {
+                    Animal.alertGoToPoint(AnimalSpawnPosition, true);
+                }
+            }            
         }
     }
 }

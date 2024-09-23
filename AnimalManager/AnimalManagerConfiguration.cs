@@ -11,18 +11,20 @@ namespace RestoreMonarchy.AnimalManager
         public bool Debug { get; set; }
         public bool ShouldSerializeDebug() => Debug;
         public string MessageColor { get; set; }
-        public int DefaultRespawnTime { get; set; }
-        public int DefaultRadius { get; set; }
-        public bool BlockUnderwater { get; set; }
+        public CustomSpawnsConfig CustomSpawns { get; set; }
         [XmlArrayItem("Animal")]
         public AnimalConfig[] Animals { get; set; }
 
         public void LoadDefaults()
         {
             MessageColor = "yellow";
-            DefaultRespawnTime = 300;
-            DefaultRadius = 10000;
-            BlockUnderwater = true;
+            CustomSpawns = new()
+            {
+                Enabled = true,
+                DefaultRespawnTime = 300,
+                DefaultMaxRadius = 1024,
+                BlockUnderwater = true
+            };
             Animals = 
             [
                 new() 

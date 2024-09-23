@@ -47,6 +47,15 @@ namespace RestoreMonarchy.AnimalManager.Services
             animalSpawnGroups.Add(spawnGroup);
         }
 
+        public void DeactiveAnimalSpawn(AnimalSpawn animalSpawn)
+        {
+            AnimalSpawnGroup spawnGroup = animalSpawnGroups.FirstOrDefault(x => x.Spawn == animalSpawn);
+            if (spawnGroup != null)
+            {
+                DeactiveAnimalSpawn(spawnGroup);
+            }
+        }
+
         public void DeactiveAnimalSpawn(AnimalSpawnGroup spawnGroup)
         {
             StopCoroutine(spawnGroup.Coroutine);
@@ -84,7 +93,7 @@ namespace RestoreMonarchy.AnimalManager.Services
                 animalComponent = animal.gameObject.AddComponent<AnimalComponent>();
             }
 
-            animalComponent.AnimalSpawn = animalSpawn;
+            animalComponent.SetAnimalSpawn(animalSpawn);
 
             animalSpawnGroups.FirstOrDefault(x => x.Spawn == animalSpawn);
             spawnGroup.Animal = animal;

@@ -3,8 +3,10 @@ using RestoreMonarchy.AnimalManager.Configurations;
 using RestoreMonarchy.AnimalManager.Helpers;
 using RestoreMonarchy.AnimalManager.Models;
 using RestoreMonarchy.AnimalManager.Services;
+using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
+using Rocket.Unturned.Chat;
 using SDG.Unturned;
 using System;
 using UnityEngine;
@@ -16,6 +18,7 @@ namespace RestoreMonarchy.AnimalManager
     public class AnimalManagerPlugin : RocketPlugin<AnimalManagerConfiguration>
     {
         public static AnimalManagerPlugin Instance { get; private set; }
+        public Color MessageColor { get; private set; }
 
         public AnimalSpawnsXmlConfiguration AnimalSpawnsConfiguration { get; private set; }
         public AnimalSpawnService AnimalSpawnService { get; private set; }
@@ -26,6 +29,7 @@ namespace RestoreMonarchy.AnimalManager
         protected override void Load()
         {
             Instance = this;
+            MessageColor = UnturnedChat.GetColorFromName(Configuration.Instance.MessageColor, Color.green);
 
             AnimalSpawnsConfiguration = new();
 
@@ -53,6 +57,20 @@ namespace RestoreMonarchy.AnimalManager
             Logger.Log($"{Name} has been unloaded!", ConsoleColor.Yellow);
         }
 
+        public override TranslationList DefaultTranslations => new()
+        {
+            { "SetAnimalSpawnSyntax", "/setanimalspawn <animal> [maxRadius] [respawnTime]" },
+            { "AnimalNotFound", "Animal {0} not found." },
+            { "InvalidRadius", "Invalid radius: {0}" },
+            { "InvalidRespawnTime", "Invalid respawn time: {0}" },
+            { "AnimalSpawnSet", "Animal spawn for {0} has been set at {1}!" },
+            { "NoAnimalSpawnsFound", "No animal spawns found in radius of {0}." },
+            { "AnimalSpawnRemoved", "Found and removed {0} animal spawns in {1}m radius." },
+            { "AnimalsNone", "There isn't any alive animals on the map." },
+            { "AnimalsNoneSpecific", "There isn't any alive {0} animals on the map." },            
+            { "AnimalTeleported", "You have been teleported to {0} animal." }
+        };
+
         internal void LogDebug(string message)
         {
             if (Configuration.Instance.Debug)
@@ -64,18 +82,21 @@ namespace RestoreMonarchy.AnimalManager
         private void OnPostLevelLoaded(int level)
         { 
             AnimalSpawnsConfiguration.Load();
-            AnimalHelper.ResetAnimalManager();
-            AnimalSpawnService = gameObject.AddComponent<AnimalSpawnService>();
+            if (Configuration.Instance.CustomSpawns.Enabled)
+            {
+                AnimalHelper.ResetAnimalManager();
+                AnimalSpawnService = gameObject.AddComponent<AnimalSpawnService>();
+            }            
         }
 
         public float GetRadius(AnimalSpawn animalSpawn)
         {
-            if (animalSpawn.Radius > 0)
+            if (animalSpawn.MaxRadius > 0)
             {
-                return animalSpawn.Radius;
+                return animalSpawn.MaxRadius;
             }
 
-            return Configuration.Instance.DefaultRadius;
+            return Configuration.Instance.CustomSpawns.DefaultMaxRadius;
         }
 
         public float GetRespawnTime(AnimalSpawn animalSpawn)
@@ -85,7 +106,7 @@ namespace RestoreMonarchy.AnimalManager
                 return animalSpawn.RespawnTime;
             }
 
-            return Configuration.Instance.DefaultRespawnTime;
+            return Configuration.Instance.CustomSpawns.DefaultRespawnTime;
         }
 
         public bool DropLoot(Animal animal)
