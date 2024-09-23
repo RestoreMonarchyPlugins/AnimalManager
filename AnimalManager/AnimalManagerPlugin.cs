@@ -1,6 +1,7 @@
 ﻿using RestoreMonarchy.AnimalManager.Configurations;
 using RestoreMonarchy.AnimalManager.Helpers;
 using RestoreMonarchy.AnimalManager.Models;
+using RestoreMonarchy.AnimalManager.Services;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
@@ -14,6 +15,7 @@ namespace RestoreMonarchy.AnimalManager
         public static AnimalManagerPlugin Instance { get; private set; }
 
         public AnimalSpawnsXmlConfiguration AnimalSpawnsConfiguration { get; private set; }
+        public AnimalSpawnService AnimalSpawnService { get; private set; }
 
         protected override void Load()
         {
@@ -37,6 +39,8 @@ namespace RestoreMonarchy.AnimalManager
         {
             Level.onPostLevelLoaded -= OnPostLevelLoaded;
 
+            Destroy(AnimalSpawnService);
+
             Logger.Log($"{Name} has been unloaded!", ConsoleColor.Yellow);
         }
 
@@ -52,6 +56,7 @@ namespace RestoreMonarchy.AnimalManager
         { 
             AnimalSpawnsConfiguration.Load();
             AnimalHelper.ResetAnimalManager();
+            AnimalSpawnService = gameObject.AddComponent<AnimalSpawnService>();
         }
 
         public float GetRadius(AnimalSpawn animalSpawn)

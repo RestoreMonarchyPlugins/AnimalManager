@@ -1,6 +1,7 @@
 ﻿using RestoreMonarchy.AnimalManager.Models;
 using Rocket.API;
 using System;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace RestoreMonarchy.AnimalManager
@@ -96,6 +97,11 @@ namespace RestoreMonarchy.AnimalManager
                     ]
                 },
             ];
+        }
+
+        public AnimalConfig GetAnimalById(ushort animalId)
+        {
+            return Animals.FirstOrDefault(x => x.Id == animalId);
         }
     }
 }

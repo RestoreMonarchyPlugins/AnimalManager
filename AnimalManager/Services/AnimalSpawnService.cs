@@ -1,41 +1,79 @@
-﻿using SDG.Unturned;
-using System;
+﻿using RestoreMonarchy.AnimalManager.Components;
+using RestoreMonarchy.AnimalManager.Models;
+using SDG.Unturned;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using AnimalSpawn = RestoreMonarchy.AnimalManager.Models.AnimalSpawn;
+using Logger = Rocket.Core.Logging.Logger;
 
 namespace RestoreMonarchy.AnimalManager.Services
 {
-    public class AnimalSpawnService
+    public class AnimalSpawnService : MonoBehaviour
     {
+        private AnimalManagerPlugin pluginInstance => AnimalManagerPlugin.Instance;
+        private AnimalManagerConfiguration configuration => pluginInstance.Configuration.Instance;
+        private AnimalSpawnsConfiguration spawnsConfiguration => pluginInstance.AnimalSpawnsConfiguration.Instance;
+
+        private readonly List<AnimalSpawnGroup> animalSpawnGroups = new();
+
         void Start()
         {
-            SDG.Unturned.AnimalManager.spawnAnimal()
+            foreach (AnimalSpawn animalSpawn in pluginInstance.AnimalSpawnsConfiguration.Instance.AnimalSpawns)
+            {
+                ActiveAnimalSpawn(animalSpawn);
+            }
         }
 
         void OnDestroy()
         {
-
+            foreach (AnimalSpawnGroup spawnGroup in animalSpawnGroups.ToList())
+            {
+                DeactiveAnimalSpawn(spawnGroup);
+            }
         }
 
-        private IEnumerator AnimalSpawnCoroutine(AnimalSpawnData animalSpawn)
+        public void ActiveAnimalSpawn(AnimalSpawn animalSpawn)
         {
-            Vector3 position = animalSpawn.Position.ToVector3();
-            Quaternion quaternion = Quaternion.Euler(0, animalSpawn.Angle * 2, 0);
+            AnimalSpawnGroup spawnGroup = new()
+            {
+                Spawn = animalSpawn
+            };
+
+            spawnGroup.Coroutine = StartCoroutine(AnimalSpawnCoroutine(spawnGroup));
+            animalSpawnGroups.Add(spawnGroup);
+        }
+
+        public void DeactiveAnimalSpawn(AnimalSpawnGroup spawnGroup)
+        {
+            StopCoroutine(spawnGroup.Coroutine);
+            if (spawnGroup.Animal != null && !spawnGroup.Animal.isDead)
+            {
+                spawnGroup.Animal.askDamage(ushort.MaxValue, Vector3.up, out var _, out var _, false, false);
+            }
+            SDG.Unturned.AnimalManager.animals.Remove(spawnGroup.Animal);
+            animalSpawnGroups.Remove(spawnGroup);
+        }
+
+        private IEnumerator AnimalSpawnCoroutine(AnimalSpawnGroup spawnGroup)
+        {
+            AnimalSpawn animalSpawn = spawnGroup.Spawn;
+            Vector3 position = new(animalSpawn.X, animalSpawn.Y, animalSpawn.Z);
+            float angle = Random.Range(0, 360);
+            Quaternion quaternion = Quaternion.Euler(0, angle * 2, 0);
 
             while (true)
             {
-                SDG.Unturned.AnimalManager.spawnAnimal(animalSpawn.AnimalId, position, quaternion);
+                ushort animalId = animalSpawn.AnimalId[Random.Range(0, animalSpawn.AnimalId.Length)];
+                SDG.Unturned.AnimalManager.spawnAnimal(animalId, position, quaternion);
                 List<Animal> animalsInRadius = [];
                 SDG.Unturned.AnimalManager.getAnimalsInRadius(position, 0.01f, animalsInRadius);
-                Animal animal = animalsInRadius.FirstOrDefault(x => x.id == animalSpawn.AnimalId);
+                Animal animal = animalsInRadius.FirstOrDefault(x => x.id == animalId && x.GetComponent<AnimalComponent>() == null);
 
                 if (animal == null)
                 {
-                    pluginInstance.LogError("Animal {0} not found", animalSpawn.AnimalId);
+                    Logger.LogWarning($"Animal {animalSpawn.AnimalId} not found");
                     yield break;
                 }
 
@@ -45,14 +83,14 @@ namespace RestoreMonarchy.AnimalManager.Services
                     animalComponent = animal.gameObject.AddComponent<AnimalComponent>();
                 }
 
-                animalComponent.OriginalPosition = position;
-                animalComponent.Radius = (float)animalSpawn.Radius;
+                animalComponent.AnimalSpawn = animalSpawn;
 
-                spawnedAnimals[animalSpawn.Name] = animal;
+                animalSpawnGroups.FirstOrDefault(x => x.Spawn == animalSpawn);
+                spawnGroup.Animal = animal;
 
                 while (true)
                 {
-                    yield return new WaitForSeconds(5);
+                    yield return new WaitForSeconds(1);
 
                     if (animal.isDead)
                     {
@@ -60,7 +98,8 @@ namespace RestoreMonarchy.AnimalManager.Services
                     }
                 }
 
-                yield return new WaitForSeconds(animalSpawn.RespawnTime);
+                float respawnTime = pluginInstance.GetRespawnTime(animalSpawn);
+                yield return new WaitForSeconds(respawnTime);
             }
         }
     }
