@@ -1,4 +1,5 @@
-﻿using RestoreMonarchy.AnimalManager.Configurations;
+﻿using HarmonyLib;
+using RestoreMonarchy.AnimalManager.Configurations;
 using RestoreMonarchy.AnimalManager.Helpers;
 using RestoreMonarchy.AnimalManager.Models;
 using RestoreMonarchy.AnimalManager.Services;
@@ -6,7 +7,9 @@ using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
 using System;
+using UnityEngine;
 using AnimalSpawn = RestoreMonarchy.AnimalManager.Models.AnimalSpawn;
+using Logger = Rocket.Core.Logging.Logger;
 
 namespace RestoreMonarchy.AnimalManager
 {
@@ -17,11 +20,17 @@ namespace RestoreMonarchy.AnimalManager
         public AnimalSpawnsXmlConfiguration AnimalSpawnsConfiguration { get; private set; }
         public AnimalSpawnService AnimalSpawnService { get; private set; }
 
+        public const string HarmonyId = "com.restoremonarchy.animalmanager";
+        private Harmony harmony;
+
         protected override void Load()
         {
             Instance = this;
 
             AnimalSpawnsConfiguration = new();
+
+            harmony = new Harmony(HarmonyId);
+            harmony.PatchAll();
 
             if (Level.isLoaded)
             {
@@ -77,6 +86,40 @@ namespace RestoreMonarchy.AnimalManager
             }
 
             return Configuration.Instance.DefaultRespawnTime;
+        }
+
+        public bool DropLoot(Animal animal)
+        {
+            AnimalConfig animalConfig = Configuration.Instance.GetAnimalById(animal.asset.id);
+            if (animalConfig == null)
+            {
+                return false;
+            }
+
+            if (animalConfig.LootItems == null)
+            {
+                return false;
+            }
+
+            Vector3 position = animal.transform.position;
+            foreach (LootItem lootItem in animalConfig.LootItems)
+            {
+                byte amount = (byte)UnityEngine.Random.Range(lootItem.Min, lootItem.Max + 1);
+                if (amount == 0)
+                {
+                    continue;
+                }
+
+                ItemAsset itemAsset = Assets.find(EAssetType.ITEM, lootItem.Id) as ItemAsset;
+                for (byte i = 0; i < amount; i++)
+                {
+                    Item item = new(itemAsset, EItemOrigin.NATURE);
+
+                    ItemManager.dropItem(item, position, false, true, true);
+                }
+            }
+
+            return true;
         }
     }
 }

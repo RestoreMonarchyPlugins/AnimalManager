@@ -10,10 +10,13 @@ namespace RestoreMonarchy.AnimalManager.Patches
         [HarmonyPrefix]
         static bool dropLoot_Prefix(Animal animal)
         {
-            return true;
+            AnimalManagerPlugin pluginInstance = AnimalManagerPlugin.Instance;
+
+            return pluginInstance.DropLoot(animal);
         }
 
         [HarmonyPatch("respawnAnimals")]
+        [HarmonyPrefix]
         static bool respawnAnimals_Prefix()
         {
             return false;
