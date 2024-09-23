@@ -1,6 +1,7 @@
 ﻿using RestoreMonarchy.AnimalManager.Models;
 using Rocket.API;
 using System;
+using System.Xml.Serialization;
 
 namespace RestoreMonarchy.AnimalManager
 {
@@ -11,6 +12,7 @@ namespace RestoreMonarchy.AnimalManager
         public string MessageColor { get; set; }
         public int DefaultRespawnTime { get; set; }
         public int DefaultRadius { get; set; }
+        [XmlArrayItem("Animal")]
         public AnimalConfig[] Animals { get; set; }
 
         public void LoadDefaults()

@@ -68,7 +68,7 @@ namespace RestoreMonarchy.AnimalManager.Configurations
                     animalIdsList.Add(table.getAnimal());
                 }
 
-                ushort[] animalIds = animalIdsList.Distinct().ToArray();
+                ushort[] animalIds = animalIdsList.Distinct().OrderBy(x => x).ToArray();
                 List<string> animalNames = new();
                 foreach (ushort animalId in animalIds)
                 {
@@ -82,9 +82,11 @@ namespace RestoreMonarchy.AnimalManager.Configurations
 
                 AnimalSpawn animalSpawn = new()
                 {
-                    AnimalId = animalIdsList.Distinct().ToArray(),
+                    AnimalId = animalIds,
                     Name = string.Join(", ", animalNames),
-                    Position = new(spawnpoint.point)
+                    X = spawnpoint.point.x,
+                    Y = spawnpoint.point.y,
+                    Z = spawnpoint.point.z,
                 };
                 configuration.AnimalSpawns.Add(animalSpawn);
             }

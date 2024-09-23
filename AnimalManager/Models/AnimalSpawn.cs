@@ -16,9 +16,16 @@ namespace RestoreMonarchy.AnimalManager.Models
         public ushort[] AnimalId { get; set; }
         [XmlAttribute]
         public uint RespawnTime { get; set; }
+        public bool ShouldSerializeRespawnTime() => RespawnTime != 0;
         [XmlAttribute]
         public decimal Radius { get; set; }
+        public bool ShouldSerializeRadius() => Radius != 0;
 
-        public PositionData Position { get; set; }
+        [XmlAttribute]
+        public float X { get; set; }
+        [XmlAttribute]
+        public float Y { get; set; }
+        [XmlAttribute]
+        public float Z { get; set; }
     }
 }
