@@ -18,7 +18,7 @@ namespace RestoreMonarchy.AnimalManager.Models
         public uint RespawnTime { get; set; }
         public bool ShouldSerializeRespawnTime() => RespawnTime != 0;
         [XmlAttribute]
-        public decimal Radius { get; set; }
+        public float Radius { get; set; }
         public bool ShouldSerializeRadius() => Radius != 0;
 
         [XmlAttribute]

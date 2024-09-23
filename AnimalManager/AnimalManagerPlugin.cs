@@ -1,8 +1,11 @@
 ﻿using RestoreMonarchy.AnimalManager.Configurations;
+using RestoreMonarchy.AnimalManager.Helpers;
+using RestoreMonarchy.AnimalManager.Models;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
 using System;
+using AnimalSpawn = RestoreMonarchy.AnimalManager.Models.AnimalSpawn;
 
 namespace RestoreMonarchy.AnimalManager
 {
@@ -46,8 +49,29 @@ namespace RestoreMonarchy.AnimalManager
         }
 
         private void OnPostLevelLoaded(int level)
-        {
+        { 
             AnimalSpawnsConfiguration.Load();
+            AnimalHelper.ResetAnimalManager();
+        }
+
+        public float GetRadius(AnimalSpawn animalSpawn)
+        {
+            if (animalSpawn.Radius > 0)
+            {
+                return animalSpawn.Radius;
+            }
+
+            return Configuration.Instance.DefaultRadius;
+        }
+
+        public float GetRespawnTime(AnimalSpawn animalSpawn)
+        {
+            if (animalSpawn.RespawnTime > 0)
+            {
+                return animalSpawn.RespawnTime;
+            }
+
+            return Configuration.Instance.DefaultRespawnTime;
         }
     }
 }

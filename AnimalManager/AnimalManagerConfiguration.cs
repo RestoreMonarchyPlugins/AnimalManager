@@ -12,6 +12,7 @@ namespace RestoreMonarchy.AnimalManager
         public string MessageColor { get; set; }
         public int DefaultRespawnTime { get; set; }
         public int DefaultRadius { get; set; }
+        public bool BlockUnderwater { get; set; }
         [XmlArrayItem("Animal")]
         public AnimalConfig[] Animals { get; set; }
 
@@ -20,6 +21,7 @@ namespace RestoreMonarchy.AnimalManager
             MessageColor = "yellow";
             DefaultRespawnTime = 300;
             DefaultRadius = 10000;
+            BlockUnderwater = true;
             Animals = 
             [
                 new() 
