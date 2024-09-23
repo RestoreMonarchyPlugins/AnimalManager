@@ -21,8 +21,8 @@ namespace RestoreMonarchy.AnimalManager.Models
         public LootItem() { }
 
         [XmlAttribute]
-        public ushort[] Id { get; set; }
-        public bool ShouldSerializeId() => Id != null && Id.Length > 0;
+        public ushort Id { get; set; }
+        public bool ShouldSerializeId() => Id != 0;
         [XmlAttribute]
         public Guid Guid { get; set; }
         public bool ShouldSerializeGuid() => Guid != Guid.Empty;

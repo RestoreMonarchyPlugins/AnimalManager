@@ -1,4 +1,5 @@
-﻿using RestoreMonarchy.AnimalManager.Models;
+﻿using RestoreMonarchy.AnimalButcher.Models;
+using RestoreMonarchy.AnimalManager.Models;
 using Rocket.Core.Logging;
 using SDG.Unturned;
 using System;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using AnimalSpawn = RestoreMonarchy.AnimalManager.Models.AnimalSpawn;
 
 namespace RestoreMonarchy.AnimalManager.Configurations
 {
@@ -57,9 +59,34 @@ namespace RestoreMonarchy.AnimalManager.Configurations
                 AnimalSpawns = new()
             };
 
-            foreach (var spawn in LevelAnimals.spawns)
+            foreach (AnimalSpawnpoint spawnpoint in LevelAnimals.spawns)
             {
-                spawn.
+                AnimalTable table = LevelAnimals.tables[spawnpoint.type];
+                List<ushort> animalIdsList = new();
+                for (int i = 0; i < 100; i++) 
+                {
+                    animalIdsList.Add(table.getAnimal());
+                }
+
+                ushort[] animalIds = animalIdsList.Distinct().ToArray();
+                List<string> animalNames = new();
+                foreach (ushort animalId in animalIds)
+                {
+                    if (Assets.find(EAssetType.ANIMAL, animalId) is not AnimalAsset animalAsset)
+                    {
+                        Logger.LogWarning($"Animal with ID {animalId} not found!");
+                        continue;
+                    }
+                    animalNames.Add(animalAsset.animalName);
+                }
+
+                AnimalSpawn animalSpawn = new()
+                {
+                    AnimalId = animalIdsList.Distinct().ToArray(),
+                    Name = string.Join(", ", animalNames),
+                    Position = new(spawnpoint.point)
+                };
+                configuration.AnimalSpawns.Add(animalSpawn);
             }
 
             return configuration;

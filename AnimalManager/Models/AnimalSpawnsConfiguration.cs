@@ -9,6 +9,5 @@ namespace RestoreMonarchy.AnimalManager.Models
     public class AnimalSpawnsConfiguration
     {
         public List<AnimalSpawn> AnimalSpawns { get; set; }
-
     }
 }

@@ -6,7 +6,7 @@ namespace RestoreMonarchy.AnimalButcher.Models
     public class PositionData
     {
         public PositionData() { }
-        public PositionData(Vector3 vector, int angle)
+        public PositionData(Vector3 vector)
         {
             X = vector.x;
             Y = vector.y;
@@ -19,8 +19,6 @@ namespace RestoreMonarchy.AnimalButcher.Models
         public float Y { get; set; }
         [XmlAttribute]
         public float Z { get; set; }
-        [XmlAttribute]
-        public byte Rot { get; set; }
 
         public Vector3 ToVector3()
         {

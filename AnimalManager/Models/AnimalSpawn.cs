@@ -11,9 +11,9 @@ namespace RestoreMonarchy.AnimalManager.Models
     public class AnimalSpawn
     {
         [XmlAttribute]
-        public string AnimalName { get; set; }
+        public string Name { get; set; }
         [XmlAttribute]
-        public ushort AnimalId { get; set; }
+        public ushort[] AnimalId { get; set; }
         [XmlAttribute]
         public uint RespawnTime { get; set; }
         [XmlAttribute]

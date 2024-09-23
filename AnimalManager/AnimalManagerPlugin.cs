@@ -1,4 +1,4 @@
-﻿using RestoreMonarchy.AnimalManager.Models;
+﻿using RestoreMonarchy.AnimalManager.Configurations;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using SDG.Unturned;
@@ -10,7 +10,7 @@ namespace RestoreMonarchy.AnimalManager
     {
         public static AnimalManagerPlugin Instance { get; private set; }
 
-        public AnimalSpawnsConfiguration AnimalSpawnsConfiguration { get; private set; }
+        public AnimalSpawnsXmlConfiguration AnimalSpawnsConfiguration { get; private set; }
 
         protected override void Load()
         {
