@@ -1,5 +1,5 @@
 # Animal Manager
-Set custom spawns points and modify the loot from animals.
+Set up custom spawns points and modify the loot from animals.
 
 ## Features
 - Modify the loot dropped by animals on death.
