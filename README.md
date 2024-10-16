@@ -5,6 +5,10 @@ Set up custom spawns points and modify the loot from animals.
 - Modify the loot dropped by animals on death.
 - Set up custom spawn points for animals with a specific radius and respawn time.
 
+When **CustomSpawns** are enabled the following Config.json settings are ignored or overridden:
+- `Respawn_Time`
+- `Max_Instances_Tiny`, `Max_Instances_Small`, `Max_Instances_Medium`, `Max_Instances_Large`, `Max_Instances_Insane`
+
 ## Commands
 - `/setanimalspawn <animal> [maxRadius] [respawnTime]` - Set a custom spawn point for an animal.
 - `/removeanimalspawns [radius]` - Remove all custom animal spawn points in a radius.
