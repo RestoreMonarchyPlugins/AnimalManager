@@ -78,7 +78,7 @@ namespace RestoreMonarchy.AnimalManager.Services
             ushort animalId = animalSpawn.AnimalId[Random.Range(0, animalSpawn.AnimalId.Length)];
             SDG.Unturned.AnimalManager.spawnAnimal(animalId, position, quaternion);
             List<Animal> animalsInRadius = [];
-            SDG.Unturned.AnimalManager.getAnimalsInRadius(position, 0.01f, animalsInRadius);
+            SDG.Unturned.AnimalManager.getAnimalsInRadius(position, 1, animalsInRadius);
             Animal animal = animalsInRadius.FirstOrDefault(x => x.id == animalId && x.GetComponent<AnimalComponent>() == null);
 
             if (animal == null)
