@@ -2,21 +2,39 @@
 Set up custom spawns points and modify the loot from animals.
 
 ## Features
-- Modify the loot dropped by animals on death.
-- Set up custom spawn points for animals with a specific radius and respawn time.
+- Modify the loot dropped by animals on death
+- Set up custom spawn points for animals
+- Limit the radius of how far animals can walk away from their spawn point
+- Set exactly how long it takes for an animal to respawn after death
 
-When **CustomSpawns** are enabled the following Config.json settings are ignored or overridden:
-- `Respawn_Time`
-- `Max_Instances_Tiny`, `Max_Instances_Small`, `Max_Instances_Medium`, `Max_Instances_Large`, `Max_Instances_Insane`
+## Notes
+The following **Config.json** settings are ignored or overridden when plugin is installed and **CustomSpawns** is set to **true**.
+
+```json
+"Animals": {
+  "Respawn_Time": 180.0, // ignored
+  "Damage_Multiplier": 0.75,
+  "Armor_Multiplier": 1.25,
+  "Max_Instances_Tiny": 4, // ignored
+  "Max_Instances_Small": 8, // ignored
+  "Max_Instances_Medium": 16, // ignored
+  "Max_Instances_Large": 32, // ignored
+  "Max_Instances_Insane": 64, // ignored
+  "Weapons_Use_Player_Damage": false
+}
+```
 
 ## Commands
-- `/setanimalspawn <animal> [maxRadius] [respawnTime]` - Set a custom spawn point for an animal.
-- `/removeanimalspawns [radius]` - Remove all custom animal spawn points in a radius.
-- `/tpanimal <animal>` - Teleport to a random animal.
-- `/rocket reload AnimalManager` - Reload the configuration. Not recommended with **CustomSpawns** enabled.
+- `/setanimalspawn <animal> [maxRadius] [respawnTime]` - Set a custom spawn point for an animal. Max radius is specified in meters and respawn time is in seconds.  
+Example: `/setanimalspawn cow 100 600`
+
+- `/removeanimalspawns [radius]` - Remove all animal spawns in a radius from where you are standing.  
+Example: `/removeanimalspawns 100`
+
+- `/tpanimal [animal]` - Teleport to a random or specified animal.  
+Example: `/tpanimal cow`
 
 ## Configuration
-### AnimalManager.Configuration.xml
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <AnimalManagerConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -75,6 +93,7 @@ When **CustomSpawns** are enabled the following Config.json settings are ignored
 ```
 
 ### AnimalSpawns.Washington.xml
+This configuration will generate automatically if it doesn't exist with all the original animal spawn points from the map. If you want to remove them, just use `/removeanimalspawns 999999` in-game to remove all the spawns.
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <AnimalSpawnsConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
