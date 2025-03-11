@@ -1,30 +1,22 @@
-
 # Animal Manager
-
 Set up custom spawns points and modify the loot from animals.
 
 ## Features
-
 - Modify the loot dropped by animals on death.
 - Set up custom spawn points for animals with a specific radius and respawn time.
 
-> **Note:** When **CustomSpawns** are enabled the following Config.json settings are ignored or overridden:
-> - `Respawn_Time`
-> - `Max_Instances_Tiny`, `Max_Instances_Small`, `Max_Instances_Medium`, `Max_Instances_Large`, `Max_Instances_Insane`
+When **CustomSpawns** are enabled the following Config.json settings are ignored or overridden:
+- `Respawn_Time`
+- `Max_Instances_Tiny`, `Max_Instances_Small`, `Max_Instances_Medium`, `Max_Instances_Large`, `Max_Instances_Insane`
 
 ## Commands
-
-| Command | Description |
-|---------|-------------|
-| `/setanimalspawn <animal> [maxRadius] [respawnTime]` | Set a custom spawn point for an animal. |
-| `/removeanimalspawns [radius]` | Remove all custom animal spawn points in a radius. |
-| `/tpanimal <animal>` | Teleport to a random animal. |
-| `/rocket reload AnimalManager` | Reload the configuration. Not recommended with **CustomSpawns** enabled. |
+- `/setanimalspawn <animal> [maxRadius] [respawnTime]` - Set a custom spawn point for an animal.
+- `/removeanimalspawns [radius]` - Remove all custom animal spawn points in a radius.
+- `/tpanimal <animal>` - Teleport to a random animal.
+- `/rocket reload AnimalManager` - Reload the configuration. Not recommended with **CustomSpawns** enabled.
 
 ## Configuration
-
 ### AnimalManager.Configuration.xml
-
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <AnimalManagerConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -83,7 +75,6 @@ Set up custom spawns points and modify the loot from animals.
 ```
 
 ### AnimalSpawns.Washington.xml
-
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <AnimalSpawnsConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -152,7 +143,6 @@ Set up custom spawns points and modify the loot from animals.
 ```
 
 ## Translations
-
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <Translations xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
