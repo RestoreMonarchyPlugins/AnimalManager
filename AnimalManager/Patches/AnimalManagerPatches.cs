@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using SDG.Unturned;
 
 namespace RestoreMonarchy.AnimalManager.Patches
@@ -12,7 +12,8 @@ namespace RestoreMonarchy.AnimalManager.Patches
         {
             AnimalManagerPlugin pluginInstance = AnimalManagerPlugin.Instance;
 
-            return pluginInstance.DropLoot(animal);
+            // If custom loot was dropped, skip the original method
+            return !pluginInstance.DropLoot(animal);
         }
 
         [HarmonyPatch("respawnAnimals")]

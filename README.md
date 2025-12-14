@@ -1,6 +1,9 @@
 # Animal Manager
 Set up custom spawns points and modify the loot from animals.
 
+## Compatibility
+This plugin is compatible with [Zombie Loot Manager](https://restoremonarchy.com/plugins/150) - custom animal loot will be properly tracked for despawning.
+
 ## Features
 - Modify the loot dropped by animals on death
 - Set up custom spawn points for animals

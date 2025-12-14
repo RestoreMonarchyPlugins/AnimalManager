@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using RestoreMonarchy.AnimalManager.Configurations;
 using RestoreMonarchy.AnimalManager.Helpers;
 using RestoreMonarchy.AnimalManager.Models;
@@ -9,6 +9,8 @@ using Rocket.Core.Plugins;
 using Rocket.Unturned.Chat;
 using SDG.Unturned;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using AnimalSpawn = RestoreMonarchy.AnimalManager.Models.AnimalSpawn;
 using Logger = Rocket.Core.Logging.Logger;
@@ -18,6 +20,8 @@ namespace RestoreMonarchy.AnimalManager
     public class AnimalManagerPlugin : RocketPlugin<AnimalManagerConfiguration>
     {
         public static AnimalManagerPlugin Instance { get; private set; }
+
+        public static event Action<List<uint>> OnAnimalLootDropped;
         public Color MessageColor { get; private set; }
 
         public AnimalSpawnsXmlConfiguration AnimalSpawnsConfiguration { get; private set; }
@@ -39,7 +43,8 @@ namespace RestoreMonarchy.AnimalManager
             if (Level.isLoaded)
             {
                 OnPostLevelLoaded(0);
-            } else
+            }
+            else
             {
                 Level.onPostLevelLoaded += OnPostLevelLoaded;
             }
@@ -67,7 +72,7 @@ namespace RestoreMonarchy.AnimalManager
             { "NoAnimalSpawnsFound", "No animal spawns found in radius of {0}." },
             { "AnimalSpawnRemoved", "Found and removed {0} animal spawns in {1}m radius." },
             { "AnimalsNone", "There isn't any alive animals on the map." },
-            { "AnimalsNoneSpecific", "There isn't any alive {0} animals on the map." },            
+            { "AnimalsNoneSpecific", "There isn't any alive {0} animals on the map." },
             { "AnimalTeleported", "You have been teleported to {0} animal." }
         };
 
@@ -80,13 +85,13 @@ namespace RestoreMonarchy.AnimalManager
         }
 
         private void OnPostLevelLoaded(int level)
-        { 
+        {
             AnimalSpawnsConfiguration.Load();
             if (Configuration.Instance.CustomSpawns.Enabled)
             {
                 AnimalHelper.ResetAnimalManager();
                 AnimalSpawnService = gameObject.AddComponent<AnimalSpawnService>();
-            }            
+            }
         }
 
         public float GetRadius(AnimalSpawn animalSpawn)
@@ -109,6 +114,12 @@ namespace RestoreMonarchy.AnimalManager
             return Configuration.Instance.CustomSpawns.DefaultRespawnTime;
         }
 
+        private static readonly FieldInfo InstanceCountField = typeof(ItemManager).GetField("instanceCount", BindingFlags.Static | BindingFlags.NonPublic);
+
+        /// <summary>
+        /// Handles custom loot dropping for animals.
+        /// </summary>
+        /// <returns>true if custom loot was dropped, false otherwise.</returns>
         public bool DropLoot(Animal animal)
         {
             AnimalConfig animalConfig = Configuration.Instance.GetAnimalById(animal.asset.id);
@@ -121,6 +132,8 @@ namespace RestoreMonarchy.AnimalManager
             {
                 return false;
             }
+
+            uint startInstanceCount = (uint)InstanceCountField.GetValue(null);
 
             Vector3 position = animal.transform.position;
             foreach (LootItem lootItem in animalConfig.LootItems)
@@ -137,6 +150,21 @@ namespace RestoreMonarchy.AnimalManager
                     Item item = new(itemAsset, EItemOrigin.NATURE);
 
                     ItemManager.dropItem(item, position, false, true, true);
+                }
+            }
+
+            if (OnAnimalLootDropped != null)
+            {
+                uint endInstanceCount = (uint)InstanceCountField.GetValue(null);
+                List<uint> instanceIds = new();
+                for (uint i = startInstanceCount + 1; i <= endInstanceCount; i++)
+                {
+                    instanceIds.Add(i);
+                }
+
+                if (instanceIds.Count > 0)
+                {
+                    OnAnimalLootDropped.Invoke(instanceIds);
                 }
             }
 
